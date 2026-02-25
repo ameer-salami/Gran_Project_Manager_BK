@@ -6,6 +6,8 @@
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   lists: [List]
+
+  /workspaces/tasks
 */
 
 // import  mongoose from 'mongoose';
