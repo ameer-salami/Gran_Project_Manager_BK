@@ -4,6 +4,7 @@ import express, { type Express, type Request, type Response } from 'express';
 import connectDB from "./config/db.js"
 import workspaceRoutes from "./routes/workspaceRoutes.js"
 import boardRoutes from './routes/boardRoutes.js'
+import listRoutes from './routes/listRoutes.js'
 // import path from 'path';
 // console.log(`db configuration done.`)
 // const authRoutes = require('./routes/authRoutes');
@@ -26,6 +27,8 @@ dotenv.config();
   app.use(express.json());
   app.use('/gran_proj_mng', workspaceRoutes)
   app.use('/gran_proj_mng', boardRoutes)
+  app.use('/gran_proj_mng', listRoutes)
+
 const port = process.env.PORT || 3000;
 
 app.get('/', (req: Request, res: Response) => {

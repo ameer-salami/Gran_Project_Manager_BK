@@ -26,6 +26,6 @@ const listSchema = new Schema<IList>({
     position: Number,
     boardId: { type: Schema.Types.ObjectId, ref: 'Board' },
     tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }]
-});
+}, { timestamps: true });
 
 export const List = model<IList>('List', listSchema)
