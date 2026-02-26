@@ -1,20 +1,8 @@
-/*
- id           String     @id @default(cuid())
-  title        String
-  workspace    Workspace  @relation(fields: [workspaceId], references: [id])
-  workspaceId  String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  lists: [List]
 
-  /workspaces/tasks
-*/
-
-// import  mongoose from 'mongoose';
 import { Schema, model, type InferSchemaType, Types } from 'mongoose';
 
 // 1. Create an interface for your document
-interface IBoard {
+export interface IBoard {
   title: string;
   workspaceId: Types.ObjectId;
   lists: Types.ObjectId[];

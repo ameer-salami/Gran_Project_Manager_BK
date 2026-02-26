@@ -1,24 +1,6 @@
-/*
-   title       String
-  description String?
-  position    Int
-  listId      String   -----> List
-  assignees   TaskAssignee[] ---------        TODO
-  comments    Comment[]      ---------        TODO
-  attachments Attachment[]  ---------        TODO
-  labels      TaskLabel[]   ---------         TODO
-  dueDate     DateTime?
-  createdById ----------> User  ------------         TODO
-  activities  Activity[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 
-*/
-
-// import  mongoose from 'mongoose';
 import { Schema, model, type InferSchemaType, Types } from 'mongoose';
 
-// 1. Create an interface for your document
 interface ITask {
   title: string;
   description?: string;

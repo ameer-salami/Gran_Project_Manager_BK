@@ -6,22 +6,10 @@ import workspaceRoutes from "./routes/workspaceRoutes.js"
 import boardRoutes from './routes/boardRoutes.js'
 import listRoutes from './routes/listRoutes.js'
 import taskRoutes from './routes/taskRoutes.js'
-// import path from 'path';
-// console.log(`db configuration done.`)
-// const authRoutes = require('./routes/authRoutes');
 
-// require('dotenv').config();
 import dotenv from 'dotenv'
 dotenv.config();
 
-// const app = express();
-// app.use('/api/auth', authRoutes);
-
-// Simple route
-// app.get('/', (req, res) => {
-  // ;  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  // });
-  
   
   const app: Express = express();
   connectDB();

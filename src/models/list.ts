@@ -1,19 +1,7 @@
-/*
-   id        String   @id @default(cuid())
-  title     String
-  position  Int      // for ordering
-  boardId   String
-  tasks     Task[]
 
-
-
-
-*/
-
-// import  mongoose from 'mongoose';
 import { Schema, model, type InferSchemaType, Types } from 'mongoose';
 
-// 1. Create an interface for your document
+
 interface IList {
   title: string;
   position: number;
