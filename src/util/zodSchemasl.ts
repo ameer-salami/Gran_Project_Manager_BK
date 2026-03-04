@@ -2,6 +2,7 @@ import { z } from 'zod';
 import mongoose from 'mongoose';
 import { List } from '../models/list.js';
 import { Workspace } from '../models/workspace.js';
+import { Board } from '../models/board.js';
 
 
 export const newTaskRequestSchema = z.object({
@@ -32,5 +33,19 @@ export const getWorkspaceBoardsSchema = z.object({
   
           return false
       }, {message: "Invalid workspace id"}),
+  })
+})
+
+export const getBoardDetailsSchema = z.object({
+  params:z.object({
+
+    id:z.string().refine( async (val) => {
+          if(mongoose.Types.ObjectId.isValid(val)) {
+              const isBoardExists = await Board.exists({_id:val})
+              return isBoardExists;
+          }
+  
+          return false
+      }, {message: "Invalid board id"}),
   })
 })

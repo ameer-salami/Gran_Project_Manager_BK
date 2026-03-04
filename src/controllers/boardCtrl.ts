@@ -1,19 +1,42 @@
 // import { Workspace } from "../models/workspace.js";
+import { title } from "node:process";
 import { Board } from "../models/board.js";
 import { Workspace } from "../models/workspace.js";
 import { type Request, type Response } from "express";
-import mongoose, {type HydratedDocument, Schema, Types} from "mongoose";
+import mongoose, {type HydratedDocument, Types} from "mongoose";
+import type { IBoard, IBoardDTO, IBoardDetails } from "../util/ProjMGRTypes.js";
 
-interface IBoard {
-  title: string;
-  workspaceId: Types.ObjectId;
-  lists: Types.ObjectId[];
-}
+// interface IBoard {
+//   title: string;
+//   workspaceId: Types.ObjectId;
+//   lists: Types.ObjectId[];
+// }
 
-interface IProjMgrDBError {
-    statusCode: number;
-    message:string;
-}
+// interface IListTask {
+//   title: string;
+//   id: Types.ObjectId;
+//   dueDate: Date
+// }
+
+
+// interface IBoardList {
+//   title: string;
+//   id: Types.ObjectId;
+//   tasks: IListTask[];
+// }
+
+
+// interface IBoardDetais {
+//   title: string;
+//   workspaceId: Types.ObjectId;
+//   lists: IBoardList[];
+// }
+
+
+// interface IProjMgrDBError {
+//     statusCode: number;
+//     message:string;
+// }
 
 
 export const createBoard = async (req: Request, res:Response) => {
@@ -30,7 +53,7 @@ export const createBoard = async (req: Request, res:Response) => {
             res.status(500).json({result:"Invalid Input!"});
          }
 
-        const board:HydratedDocument<IBoard> = new Board({title:title, workspaceId: workspaceId});
+        const board = new Board({title:title, workspaceId: new Types.ObjectId(workspaceId)});
         const result = await board.save();
 
         const workspaceUpdResult = await addNewBoard(new Types.ObjectId(workspaceId), board._id)
@@ -39,6 +62,39 @@ export const createBoard = async (req: Request, res:Response) => {
             throw new Error(workspaceUpdResult.message);
         }
         res.status(200).json(result);
+    } catch(err: any) {
+        res.status(400).json({ error: err.message})
+    }
+}
+
+export const getBoardsByWspId = async (req: Request, res:Response) => {
+    const {workspaceId} = req.query;
+    const workspaceIdObj = new Types.ObjectId(workspaceId as string);
+
+    try {
+        const result = await getBoardsByWspIdResult(workspaceIdObj)
+        if(result.boards) {
+            res.status(result.statusCode).json({message: result.message, boards: result.boards})
+        } else {
+            res.status(result.statusCode).json({message: result.message})
+        }
+    } catch(err: any) {
+        res.status(400).json({ error: err.message})
+    }
+}
+
+export const getBoardDetailsByBoardId = async (req: Request, res:Response) => {
+
+    const {id} = req.params;
+    const boardObjId = new Types.ObjectId(id as string);
+
+    try {
+        const result = await getBoardDetails(boardObjId)
+        if(result.boardDTO) {
+            res.status(result.statusCode).json({message: result.message, boards: result.boardDTO})
+        } else {
+            res.status(result.statusCode).json({message: result.message})
+        }
     } catch(err: any) {
         res.status(400).json({ error: err.message})
     }
@@ -69,32 +125,60 @@ export const addNewBoard = async (workspaceId:Types.ObjectId, boardId:Types.Obje
 
 }
 
-export const getBoardsByWspId = async (req: Request, res:Response) => {
-    const {workspaceId} = req.query;
-    const workspaceIdObj = new Types.ObjectId(workspaceId as string);
-
-    try {
-        const result = await getBoardsByWspIdResult(workspaceIdObj)
-        if(result.boards) {
-            res.status(result.statusCode).json({message: result.message, boards: result.boards})
-        } else {
-            res.status(result.statusCode).json({message: result.message})
-        }
-    } catch(err: any) {
-        res.status(400).json({ error: err.message})
-    }
-}
 
 export const  getBoardsByWspIdResult = async (workspaceId:Types.ObjectId) => {
     
     try {
-        const boards = await Board.find({workspaceId: workspaceId}).populate({
-            path:'lists',
-            populate: "tasks"
-        })
-        .exec();
+        // const boards = await Board.find({workspaceId: workspaceId}).populate({
+        //     path:'lists',
+        //     populate: "tasks"
+        // })
+        // .exec();
+
+        const boards = await Board.find({workspaceId: workspaceId})
 
         return {boards,statusCode:201, message:"bords for workspace " + workspaceId + " retrieved successfully" }
+
+    }  catch(err: any) {
+        
+        return {statusCode:400, message:err.message}
+    }
+}
+
+export const  getBoardDetails = async (boardId:Types.ObjectId) => {
+    
+    try {
+       
+
+        const board : IBoardDetails | null = await Board.findOne({_id: boardId}).populate({
+            path:'lists',
+            options: {sort: {position:1}},
+            populate: {
+                path:"tasks",
+                model: "Task",
+                options: {sort: {position:1}}
+            }
+        }).lean<IBoardDetails>()
+
+        console.log("found board details: ", board)
+
+
+        const boardDTO: IBoardDTO | null = board ? {
+            id: board._id.toString(),
+            title: board.title,
+            workspaceId: board.workspaceId.toString(),
+            lists:board.lists.map((list) => ({
+                id: list._id.toString(),
+                title:list.title,
+                tasks:list.tasks.map((task) => ({
+                    id:task._id.toString(),
+                    title: task.title,
+                    dueDate: task.dueDate?.toUTCString()
+                }))
+            }))
+        } : null;
+
+        return {boardDTO,statusCode:201, message:"details of board id " + boardId + " retrieved successfully" }
 
     }  catch(err: any) {
         
