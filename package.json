@@ -13,8 +13,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/winston": "^2.4.4",
     "express": "^5.2.1",
     "mongoose": "^9.2.1",
+    "winston": "^3.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

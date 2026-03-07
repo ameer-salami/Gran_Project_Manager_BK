@@ -5,6 +5,7 @@ import { Workspace } from "../models/workspace.js";
 import { type Request, type Response } from "express";
 import mongoose, {type HydratedDocument, Types} from "mongoose";
 import type { IBoard, IBoardDTO, IBoardDetails } from "../util/ProjMGRTypes.js";
+import Logger from "../util/logger.js";
 
 // interface IBoard {
 //   title: string;
@@ -87,7 +88,7 @@ export const getBoardDetailsByBoardId = async (req: Request, res:Response) => {
 
     const {id} = req.params;
     const boardObjId = new Types.ObjectId(id as string);
-
+    Logger.info(`GET /board/${id} accessed.`)
     try {
         const result = await getBoardDetails(boardObjId)
         if(result.boardDTO) {
@@ -160,7 +161,7 @@ export const  getBoardDetails = async (boardId:Types.ObjectId) => {
             }
         }).lean<IBoardDetails>()
 
-        console.log("found board details: ", board)
+        // console.log("found board details: ", board)
 
 
         const boardDTO: IBoardDTO | null = board ? {

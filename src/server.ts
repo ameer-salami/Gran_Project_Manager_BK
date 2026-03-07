@@ -8,6 +8,7 @@ import listRoutes from './routes/listRoutes.js'
 import taskRoutes from './routes/taskRoutes.js'
 
 import dotenv from 'dotenv'
+import Logger from './util/logger.js';
 dotenv.config();
 
   
@@ -23,6 +24,7 @@ const port = process.env.PORT || 3000;
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to Express & TypeScript Server!');
+  Logger.info("Main route accessed.")
 });
 
 app.listen(port, () => {
