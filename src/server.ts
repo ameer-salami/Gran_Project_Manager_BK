@@ -9,7 +9,7 @@ import taskRoutes from './routes/taskRoutes.js'
 
 import dotenv from 'dotenv'
 import Logger from './util/logger.js';
-import type { CorsOptions } from 'cors';
+import cors, {type  CorsOptions } from 'cors';
 dotenv.config();
 
   
@@ -23,6 +23,7 @@ dotenv.config();
   optionsSuccessStatus: 200 // Some legacy browsers (IE11) choke on 204
 };
 
+app.use(cors(corsOptions));
 
   connectDB();
   app.use(express.json());
